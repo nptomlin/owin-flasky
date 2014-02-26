@@ -14,18 +14,15 @@ namespace Flasky.Sample
         {
             string uri = "http://localhost:8080/";
 
-            using (WebApp.Start<Startup>(uri))
+            using (WebApp.Start(uri, Configure))
             {
                 Console.WriteLine("Started");
                 Console.ReadKey();
                 Console.WriteLine("Stopping");
             }
         }
-    }
 
-    public class Startup
-    {
-        public void Configuration(IAppBuilder app)
+        public static void Configure(IAppBuilder app)
         {
             app.UseFlasky(appConfig =>
                               {
@@ -33,4 +30,6 @@ namespace Flasky.Sample
                               });
         }
     }
+
+
 }

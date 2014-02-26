@@ -8,5 +8,10 @@ namespace Flasky.Sample
         {
             return "Hello Mum";
         }
+
+        public static object WelcomeFoo(OwinRequest request, OwinResponse response)
+        {
+            return "Hello Again";
+        }
     }
 }
