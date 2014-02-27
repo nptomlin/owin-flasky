@@ -9,9 +9,9 @@ namespace Flasky
 {
     public static class FlaskyExtensions
     {
-        public static void UseFlasky(this IAppBuilder appBuilder, Action<ApplicationConfiguration> configAction)
+        public static void UseFlasky(this IAppBuilder appBuilder, Action<FlaskyConfiguration> configAction)
         {
-            var appConfig = new ApplicationConfiguration();
+            var appConfig = new FlaskyConfiguration();
             configAction(appConfig);
             appConfig.Initialise(appBuilder);
         }

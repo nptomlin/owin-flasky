@@ -9,7 +9,7 @@ namespace Flasky.Sample
             return "Hello Mum";
         }
 
-        public static object WelcomeFoo(OwinRequest request, OwinResponse response)
+        public static object WelcomeAgain(OwinRequest request)
         {
             return "Hello Again";
         }

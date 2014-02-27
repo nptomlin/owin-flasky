@@ -60,9 +60,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationConfiguration.cs" />
+    <Compile Include="FlaskyApplication.cs" />
+    <Compile Include="FlaskyConfiguration.cs" />
     <Compile Include="FlaskyExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RouteMatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

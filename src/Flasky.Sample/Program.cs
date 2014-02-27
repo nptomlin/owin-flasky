@@ -26,7 +26,8 @@ namespace Flasky.Sample
         {
             app.UseFlasky(appConfig =>
                               {
-                                  appConfig.RegisterRouteHandler("/", RouteHandlers.Welcome);
+                                  appConfig.RegisterRouteHandler("/", RouteHandlers.Welcome)
+                                           .RegisterRouteHandler("/foo", RouteHandlers.WelcomeAgain);
                               });
         }
     }
