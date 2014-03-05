@@ -1,26 +1,31 @@
 using System;
 using System.Collections.Generic;
 using Owin.Types;
+using System.Linq;
 
 namespace Flasky
 {
     public class RouteMatcher
     {
-        private readonly IDictionary<string, Func<OwinRequest, object>> _routeHandlers;
+        private readonly IDictionary<Route, Func<OwinRequest, object>> _routeHandlers;
 
-        public RouteMatcher(IDictionary<string, Func<OwinRequest, object>> routeHandlers)
+        public RouteMatcher(IDictionary<Route, Func<OwinRequest, object>> routeHandlers)
         {
             _routeHandlers = routeHandlers;
         }
 
         public bool HasMatch(OwinRequest request)
         {
-            return _routeHandlers.ContainsKey(request.Path);
+            return _routeHandlers.Any(rvp => rvp.Key.HasMatch(request));
         }
 
         public Func<OwinRequest, object> GetMatch(OwinRequest request)
         {
-            return _routeHandlers[request.Path];
+            var match = _routeHandlers
+                        .Where(rvp => rvp.Key.HasMatch(request))
+                        .OrderByDescending(rvp => rvp.Key.Specificity)
+                        .Select(rvp => rvp.Value).FirstOrDefault();
+            return match;
         }
     }
 }

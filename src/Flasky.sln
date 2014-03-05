@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flasky", "Flasky\Flasky.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flasky.Sample", "Flasky.Sample\Flasky.Sample.csproj", "{910E8C8D-5098-47EF-9EB6-CE446EEC7573}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flasky.Tests", "Flasky.Tests\Flasky.Tests.csproj", "{B67C439A-C8CA-41B6-B61C-263E0D377F13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{910E8C8D-5098-47EF-9EB6-CE446EEC7573}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{910E8C8D-5098-47EF-9EB6-CE446EEC7573}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{910E8C8D-5098-47EF-9EB6-CE446EEC7573}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B67C439A-C8CA-41B6-B61C-263E0D377F13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B67C439A-C8CA-41B6-B61C-263E0D377F13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B67C439A-C8CA-41B6-B61C-263E0D377F13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B67C439A-C8CA-41B6-B61C-263E0D377F13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
