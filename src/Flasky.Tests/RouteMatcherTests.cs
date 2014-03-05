@@ -79,7 +79,7 @@ namespace Flasky.Tests
         }
 
         [Test] 
-        public void When_matcher_is_asked_to_match_a_path_with_and_method_and_accept_header_that_is_not_set_up_no_match_is_found()
+        public void When_matcher_is_asked_to_match_a_path_with_and_method_that_is_not_set_up_no_match_is_found()
         {
             var routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>();
             routeHandlers.Add(new Route("foo/", "GET"), r => { return "test-response"; });
@@ -89,7 +89,6 @@ namespace Flasky.Tests
             var request = OwinRequest.Create();
             request.Path = "foo/";
             request.Method = "POST";
-            request.SetHeader("Accept", "application/json");
 
             Assert.That(matcher.HasMatch(request), Is.False);
         }
@@ -113,7 +112,6 @@ namespace Flasky.Tests
             var request = OwinRequest.Create();
             request.Path = "foo/";
             request.Method = "POST";
-            request.SetHeader("Accept", "application/json");
 
             Assert.That(matcher.HasMatch(request), Is.True);
             Assert.That(matcher.GetMatch(request)(request).ToString(), Is.EqualTo("test-response-post"));
