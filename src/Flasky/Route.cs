@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using Owin.Types;
 
 namespace Flasky
@@ -13,7 +14,7 @@ namespace Flasky
         {
             _path = path;
             Specificity = RouteSpecificity.Path;
-            _comparison = (request) => { return request.Path == _path; };
+            _comparison = (request) => { return HasMatch(request.Path); };
         }
 
         public Route(string path, string method)
@@ -23,7 +24,7 @@ namespace Flasky
             Specificity = RouteSpecificity.PathAndMethod;
             _comparison = (request) =>
                                     {
-                                        return request.Path == _path && _method.Equals(request.Method, StringComparison.OrdinalIgnoreCase);
+                                        return HasMatch(request.Path) && _method.Equals(request.Method, StringComparison.OrdinalIgnoreCase);
                                     };
         }
 
@@ -32,6 +33,13 @@ namespace Flasky
         public bool HasMatch(OwinRequest request)
         {
             return _comparison(request);
+        }
+
+        public bool HasMatch(string path)
+        {
+            Regex regex = new Regex(_path);
+            var match = regex.Match(path);
+            return match.Success;
         }
     }
 }
