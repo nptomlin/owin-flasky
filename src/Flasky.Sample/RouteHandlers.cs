@@ -13,5 +13,10 @@ namespace Flasky.Sample
         {
             return "Hello Again";
         }
+
+        public static object WelcomeJson(OwinRequest request)
+        {
+            return new { foo="bar"}.AsJson();
+        }
     }
 }

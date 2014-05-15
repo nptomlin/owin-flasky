@@ -12,8 +12,8 @@ namespace Flasky.Tests
         [Test]
         public void When_matcher_is_asked_to_match_a_path_that_is_set_up_match_is_found()
         {
-            var routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>();
-            routeHandlers.Add(new Route("foo/"), r => { return "test-response"; });
+            var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>();
+            routeHandlers.Add(new RegexRoute("foo/"), r => { return "test-response"; });
 
             var matcher = new RouteMatcher(routeHandlers);
 
@@ -28,10 +28,10 @@ namespace Flasky.Tests
         {
             const string testResponse = "test-response";
 
-            var routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>
+            var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>
                                     {
                                         {
-                                            new Route("foo/"), r =>
+                                            new RegexRoute("foo/"), r =>
                                                         {
                                                             return testResponse;
                                                         }
@@ -52,7 +52,7 @@ namespace Flasky.Tests
         [Test]
         public void When_matcher_is_asked_to_match_a_path_that_is_not_set_up_no_match_is_found()
         {
-            var routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>();
+            var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>();
 
             var matcher = new RouteMatcher(routeHandlers);
 
@@ -68,7 +68,7 @@ namespace Flasky.Tests
         {
             const string testResponse = "test-response";
 
-            var matcher = new RouteMatcher(new Dictionary<Route, Func<OwinRequest, object>> { });
+            var matcher = new RouteMatcher(new Dictionary<RouteBase, Func<OwinRequest, object>> { });
 
             var request = OwinRequest.Create();
             request.Path = "foo/";
@@ -81,8 +81,8 @@ namespace Flasky.Tests
         [Test] 
         public void When_matcher_is_asked_to_match_a_path_with_and_method_that_is_not_set_up_no_match_is_found()
         {
-            var routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>();
-            routeHandlers.Add(new Route("foo/", "GET"), r => { return "test-response"; });
+            var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>();
+            routeHandlers.Add(new RegexRoute("foo/", "GET"), r => { return "test-response"; });
 
             var matcher = new RouteMatcher(routeHandlers);
 
@@ -102,10 +102,12 @@ namespace Flasky.Tests
         public void When_matcher_is_asked_to_match_a_request_that_has_many_paths_set_up_the_most_specific_route_which_matches_wins()
         {
 
-            var routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>();
-            routeHandlers.Add(new Route("foo/"), r => { return "test-response-default"; });
-            routeHandlers.Add(new Route("foo/", "GET"), r => { return "test-response-get"; });
-            routeHandlers.Add(new Route("foo/", "POST"), r => { return "test-response-post"; });
+            var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>
+                                    {
+                                        {new RegexRoute("foo/"), r => { return "test-response-default"; }},
+                                        {new RegexRoute("foo/", "GET"), r => { return "test-response-get"; }},
+                                        {new RegexRoute("foo/", "POST"), r => { return "test-response-post"; }}
+                                    };
 
             var matcher = new RouteMatcher(routeHandlers);
 

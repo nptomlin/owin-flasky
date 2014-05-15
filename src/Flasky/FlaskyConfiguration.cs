@@ -7,20 +7,20 @@ namespace Flasky
 {
     public class FlaskyConfiguration
     {
-        private readonly IDictionary<Route, Func<OwinRequest, object>> _routeHandlers;
+        private readonly IDictionary<RouteBase, Func<OwinRequest, object>> _routeHandlers;
 
         public FlaskyConfiguration()
         {
-            _routeHandlers = new Dictionary<Route, Func<OwinRequest, object>>();
+            _routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>();
         }
 
-        public FlaskyConfiguration RegisterRouteHandler(string path, Func<OwinRequest, object> handler)
+        public FlaskyConfiguration AddRouteHandler(string path, Func<OwinRequest, object> handler)
         {
             _routeHandlers.Add(new Route(path), handler);
             return this;
         }
 
-        public FlaskyConfiguration RegisterRouteHandler(string path, string method, Func<OwinRequest, object> handler)
+        public FlaskyConfiguration AddRouteHandler(string path, string method, Func<OwinRequest, object> handler)
         {
             _routeHandlers.Add(new Route(path, method), handler);
             return this;

@@ -7,9 +7,9 @@ namespace Flasky
 {
     public class RouteMatcher
     {
-        private readonly IDictionary<Route, Func<OwinRequest, object>> _routeHandlers;
+        private readonly IDictionary<RouteBase, Func<OwinRequest, object>> _routeHandlers;
 
-        public RouteMatcher(IDictionary<Route, Func<OwinRequest, object>> routeHandlers)
+        public RouteMatcher(IDictionary<RouteBase, Func<OwinRequest, object>> routeHandlers)
         {
             _routeHandlers = routeHandlers;
         }

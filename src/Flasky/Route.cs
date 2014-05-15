@@ -1,45 +1,18 @@
-using System;
-using System.Text.RegularExpressions;
-using Owin.Types;
-
 namespace Flasky
 {
-    public class Route
+    public class Route : RouteBase
     {
-        readonly string _path;
-        readonly string _method;
-        readonly Func<OwinRequest, bool> _comparison;
-
-        public Route(string path)
+        public Route(string path) : base(path)
         {
-            _path = path;
-            Specificity = RouteSpecificity.Path;
-            _comparison = (request) => { return HasMatch(request.Path); };
         }
 
-        public Route(string path, string method)
+        public Route(string path, string method) : base(path, method)
         {
-            _path = path;
-            _method = method;
-            Specificity = RouteSpecificity.PathAndMethod;
-            _comparison = (request) =>
-                                    {
-                                        return HasMatch(request.Path) && _method.Equals(request.Method, StringComparison.OrdinalIgnoreCase);
-                                    };
         }
 
-        public int Specificity { get; private set; }
-
-        public bool HasMatch(OwinRequest request)
+        public override bool HasMatch(string path)
         {
-            return _comparison(request);
-        }
-
-        public bool HasMatch(string path)
-        {
-            Regex regex = new Regex(_path);
-            var match = regex.Match(path);
-            return match.Success;
+            return path == Path;
         }
     }
 }
