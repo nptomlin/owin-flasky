@@ -119,5 +119,46 @@ namespace Flasky.Tests
             Assert.That(matcher.GetMatch(request)(request).ToString(), Is.EqualTo("test-response-post"));
         }
 
+        [Test]
+        public void Test_paths()
+        {
+            var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>
+                                    {
+                                        {new RegexRoute("/"), r => { return "default"; }},
+                                        {new RegexRoute("/special"), r => { return "special"; }},
+                                        {new RegexRoute("/<year>"), r => { return "year"; }},
+                                        {new RegexRoute("/<name>"), r => { return "post"; }},
+                                        {new RegexRoute("/<name>/edit"), r => { return "editpage"; }},
+                                        {new RegexRoute("/<name1>/silly/<name2>"), r => { return "sillypage"; }},
+                                        {new RegexRoute("/<name1>/silly/<name2>/edit"), r => { return "editsillypage"; }},
+                                        {new RegexRoute("/Talk:<name>"), r => { return "talk"; }},
+                                        {new RegexRoute("/User:<username>"), r => { return "user"; }},
+                                        {new RegexRoute("/User:<username>/<name>"), r => { return "userpage"; }},
+                                        {new RegexRoute("/Files/<file>"), r => { return "files"; }}
+                                    };
+
+            var matcher = new RouteMatcher(routeHandlers);
+
+            AssertPathMatches(matcher, "/" , "default");
+            AssertPathMatches(matcher, "/Special", "special");
+            AssertPathMatches(matcher, "/2007", "year");
+            AssertPathMatches(matcher, "/Some/Page", "page");
+            AssertPathMatches(matcher, "/Some/Page/edit", "editpage");
+            AssertPathMatches(matcher, "/Foo/silly/bar", "sillypage");
+            AssertPathMatches(matcher, "/Foo/silly/bar/edit", "editsillypage");
+            AssertPathMatches(matcher, "/Talk:Foo/Bar", "talk");
+            AssertPathMatches(matcher, "/User:thomas", "user");
+            AssertPathMatches(matcher, "/User:thomas/projects/werkzeug", "userpage");
+            AssertPathMatches(matcher, "/Files/downloads/werkzeug/0.2.zip", "files");
+        }
+
+        private static void AssertPathMatches(RouteMatcher matcher, string path, string expectedResponse)
+        {
+            var request = OwinRequest.Create();
+            request.Path = path;
+            
+            var match = matcher.GetMatch(request);
+            Assert.That(match(request).ToString(), Is.EqualTo(expectedResponse));
+        }
     }
 }

@@ -1,3 +1,4 @@
+using Flasky.Response;
 using Owin.Types;
 
 namespace Flasky.Sample
@@ -16,7 +17,8 @@ namespace Flasky.Sample
 
         public static object WelcomeJson(OwinRequest request)
         {
-            return new { foo="bar"}.AsJson();
+            return new {foo = "bar"}.AsJsonResponse();
         }
+
     }
 }

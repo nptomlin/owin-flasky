@@ -1,4 +1,8 @@
+using System;
+using System.Threading.Tasks;
+using Flasky.Response;
 using Owin;
+using Owin.Types;
 
 namespace Flasky
 {
@@ -17,13 +21,25 @@ namespace Flasky
                                            {
                                                if (_routeMatcher.HasMatch(req))
                                                {
-                                                   res.ContentType = "text/plain";
-                                                   return res.WriteAsync(_routeMatcher.GetMatch(req)(req).ToString());
+                                                   var routeHandler = _routeMatcher.GetMatch(req);
+                                                   return InvokeHandler(res, routeHandler, req);
                                                }
                                                res.StatusCode = 404;
                                                res.ContentType = "text/plain";
                                                return res.WriteAsync("Not found");
                                            });
+        }
+
+        private static Task InvokeHandler(OwinResponse res, Func<OwinRequest, object> routeHandler, OwinRequest req)
+        {
+            var result = routeHandler(req);
+            var flaskyResponse = result as IResponse;
+            if(flaskyResponse != null)
+            {
+                return flaskyResponse.Write(res);
+            }
+            res.ContentType = "text/plain";
+            return res.WriteAsync(result.ToString());
         }
     }
 }
