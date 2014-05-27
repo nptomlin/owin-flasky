@@ -66,8 +66,6 @@ namespace Flasky.Tests
         [Test]
         public void When_matcher_is_asked_to_return_a_request_handler_that_is_not_set_up_null_is_returned()
         {
-            const string testResponse = "test-response";
-
             var matcher = new RouteMatcher(new Dictionary<RouteBase, Func<OwinRequest, object>> { });
 
             var request = OwinRequest.Create();
