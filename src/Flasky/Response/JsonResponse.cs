@@ -16,6 +16,7 @@ namespace Flasky.Response
 
         public Task Write(OwinResponse response)
         {
+            response.ContentType = "application/json";
             return response.WriteAsync(_objectToWrite.ToJson());
         }
 
