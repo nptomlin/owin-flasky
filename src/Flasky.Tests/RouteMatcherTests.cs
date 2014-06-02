@@ -130,24 +130,28 @@ namespace Flasky.Tests
         {
             var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>
                                     {
+                                        //the order they are added gives precedence currently and so most greedy should be added last.
+                                        //flask adds a weighting for complexity and most complex are evaluated first. will revisit
                                         {new RegexRoute("/"), r => { return "default"; }},
                                         {new RegexRoute("/special"), r => { return "special"; }},
-                                        {new RegexRoute("/<name1>/silly/<name2>"), r => { return "sillypage"; }},
-                                        {new RegexRoute("/<name1>/silly/<name2>/edit"), r => { return "editsillypage"; }},
-                                        {new RegexRoute("/Talk:<name*>"), r => { return "talk"; }},
+                                        {new RegexRoute("/<int:year>"), r => { return "date"; }},
+                                        {new RegexRoute("/Talk:<path:name>"), r => { return "talk"; }},
                                         {new RegexRoute("/User:<username>"), r => { return "user"; }},
-                                        {new RegexRoute("/User:<username>/<name*>"), r => { return "userpage"; }},
-                                        {new RegexRoute("/<year>"), r => { return "date"; }},
-                                        {new RegexRoute("/Files/<file*>"), r => { return "files"; }},
-                                        {new RegexRoute("/<name*>/edit"), r => { return "editpage"; }},
-                                        {new RegexRoute("/<name*>"), r => { return "post"; }}
+                                        {new RegexRoute("/User:<username>/<path:name>"), r => { return "userpage"; }},
+                                        {new RegexRoute("/Files/<path:file>"), r => { return "files"; }},
+
+                                        {new RegexRoute("/<path:name>/silly/<path:name2>/edit"), r => { return "editsillypage"; }},
+                                        {new RegexRoute("/<path:name>/silly/<path:name2>"), r => { return "sillypage"; }},
+
+                                        {new RegexRoute("/<path:name>/edit"), r => { return "editpage"; }},
+                                        {new RegexRoute("/<path:name>"), r => { return "page"; }}
                                     };
             var matcher = new RouteMatcher(routeHandlers);
 
             AssertPathMatches(matcher, "/" , "default");
             AssertPathMatches(matcher, "/Special", "special");
             AssertPathMatches(matcher, "/2014", "date");
-            AssertPathMatches(matcher, "/Some/Page", "post");
+            AssertPathMatches(matcher, "/Some/Page", "page");
             AssertPathMatches(matcher, "/Some/Page/edit", "editpage");
             AssertPathMatches(matcher, "/Foo/silly/bar", "sillypage");
             AssertPathMatches(matcher, "/Foo/silly/bar/edit", "editsillypage");

@@ -64,11 +64,15 @@ namespace Flasky
                 }
                 else if (converter.Equals("default"))
                 {
-                    regexParts.Add("(?<{0}>[^/]+)".Fmt(variable));
+                    regexParts.Add("(?<{0}>{1})".Fmt(variable, "[^/]+"));
                 }
-                else if (converter.Equals("wildcard"))
+                else if (converter.Equals("path"))
                 {
-                    regexParts.Add("(?<{0}>[^/].*?)".Fmt(variable));
+                    regexParts.Add("(?<{0}>{1})".Fmt(variable, "[^/].*?"));//[^/].*?
+                }
+                else if (converter.Equals("int"))
+                {
+                    regexParts.Add("(?<{0}>{1})".Fmt(variable, "\\d+"));
                 }
 
             }

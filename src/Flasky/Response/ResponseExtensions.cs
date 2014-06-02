@@ -9,7 +9,7 @@ namespace Flasky.Response
             return source.ToJson();
         }
 
-        public static object AsJsonResponse<T>(this T source) where T : class
+        public static IResponse AsJsonResponse<T>(this T source) where T : class
         {
             return JsonResponse<T>.Create(source);
         }

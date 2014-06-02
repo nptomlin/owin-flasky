@@ -16,13 +16,13 @@ namespace Flasky
 
         public FlaskyConfiguration AddRouteHandler(string path, Func<OwinRequest, object> handler)
         {
-            _routeHandlers.Add(new Route(path), handler);
+            _routeHandlers.Add(new RegexRoute(path), handler);
             return this;
         }
 
         public FlaskyConfiguration AddRouteHandler(string path, string method, Func<OwinRequest, object> handler)
         {
-            _routeHandlers.Add(new Route(path, method), handler);
+            _routeHandlers.Add(new RegexRoute(path, method), handler);
             return this;
         }
 

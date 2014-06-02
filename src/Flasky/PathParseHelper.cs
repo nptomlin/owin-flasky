@@ -12,14 +12,14 @@ namespace Flasky
         static PathParseHelper()
         {
             //stolen from flask
-            const string pattern = @"(?<static>[^<]*) # static rule data
-<
-(?<variable>[a-zA-Z_][a-zA-Z0-9_]*) # variable name
-(?<wildcard>[\*]{0,1}) # wildcard
->
-";
+//            const string pattern = @"(?<static>[^<]*) # static rule data
+//<
+//(?<variable>[a-zA-Z_][a-zA-Z0-9_]*) # variable name
+//(?<wildcard>[\*]{0,1}) # wildcard
+//>
+//";
 
-            const string orig_pattern = @"(?<static>[^<]*) # static rule data
+            const string pattern = @"(?<static>[^<]*) # static rule data
 <
 (?:
 (?<converter>[a-zA-Z_][a-zA-Z0-9_]*) # converter name
@@ -69,13 +69,13 @@ namespace Flasky
                     yield return new Tuple<string, string>(null, data["static"].Value);
                 }
                 var variable = data["variable"].Value;
-                var wildcard = data["wildcard"].Success && !String.IsNullOrEmpty(data["wildcard"].Value);
+                var converter = data["converter"].Success && !String.IsNullOrEmpty(data["converter"].Value) ?  data["converter"].Value : "default";
                 if(usedNames.Contains(variable))
                 {
                     throw new ArgumentException("variable name {0} used twice.".Fmt(variable), path);// perhaps a route config error
                 }
                 usedNames.Add(variable);
-                yield return new Tuple<string, string>(wildcard ? "wildcard" : "default" ,variable);
+                yield return new Tuple<string, string>(converter , variable);
                 pos = m.Index + m.Length;
             }
             if( pos < end)

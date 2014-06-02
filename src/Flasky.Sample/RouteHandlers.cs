@@ -20,5 +20,9 @@ namespace Flasky.Sample
             return new {foo = "bar"}.AsJsonResponse();
         }
 
+        public static object HelloMum(OwinRequest arg)
+        {
+            return new { foo = "bar" }.AsJsonResponse();
+        }
     }
 }

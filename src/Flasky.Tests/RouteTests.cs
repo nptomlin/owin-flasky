@@ -22,7 +22,7 @@ namespace Flasky.Tests
         [Test]
         public void When_route_path_contains_regex_and_path_that_matches_regex_match_is_successful()
         {
-            var route = new RegexRoute(@"foo/(?<foo>[A-Za-z0-9\-]+)/");
+            var route = new RegexRoute(@"foo/<bar>/");
             Assert.That(route.HasMatch("foo/bar/"), Is.True);
         }
     }

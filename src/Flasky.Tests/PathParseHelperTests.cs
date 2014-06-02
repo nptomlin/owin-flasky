@@ -45,9 +45,9 @@ namespace Flasky.Tests
         }
 
         [Test]
-        public void When_there_is_a_slash_followed_by_wildcard_argument_segment_followed_by_static_segment_expect_three_tuples()
+        public void When_there_is_a_slash_followed_by_path_argument_segment_followed_by_static_segment_expect_three_tuples()
         {
-            var vals = PathParseHelper.Prepare("/<foo*>/bar");
+            var vals = PathParseHelper.Prepare("/<path:foo>/bar");
             var enumerator = vals.GetEnumerator();
 
             Assert.That(enumerator.MoveNext());
@@ -55,7 +55,7 @@ namespace Flasky.Tests
             Assert.That(enumerator.Current.Item2, Is.EqualTo("/"));
 
             Assert.That(enumerator.MoveNext());
-            Assert.That(enumerator.Current.Item1, Is.EqualTo("wildcard"));
+            Assert.That(enumerator.Current.Item1, Is.EqualTo("path"));
             Assert.That(enumerator.Current.Item2, Is.EqualTo("foo"));
 
             Assert.That(enumerator.MoveNext());

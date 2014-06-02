@@ -24,7 +24,8 @@ namespace Flasky.Sample
                               {
                                   appConfig.AddRouteHandler("/", RouteHandlers.Welcome)
                                            .AddRouteHandler("/foo", RouteHandlers.WelcomeAgain)
-                                           .AddRouteHandler("/jsonfoo", RouteHandlers.WelcomeJson);
+                                           .AddRouteHandler("/jsonfoo", RouteHandlers.WelcomeJson)
+                                           .AddRouteHandler("/json/<one>/<two>", RouteHandlers.HelloMum);
                               });
         }
     }
