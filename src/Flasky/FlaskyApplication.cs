@@ -1,33 +1,35 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Flasky.Response;
-using Owin;
 using Owin.Types;
+
 
 namespace Flasky
 {
+    using AppFunc = Func<IDictionary<string, object>, Task>;
+
     public class FlaskyApplication
     {
         readonly RouteMatcher _routeMatcher;
+        readonly AppFunc _next;
 
-        public FlaskyApplication(RouteMatcher routeMatcher)
+        public FlaskyApplication(AppFunc next, RouteMatcher routeMatcher)
         {
+            _next = next;
             _routeMatcher = routeMatcher;
         }
 
-        protected internal void Initialise(IAppBuilder appBuilder)
+        public Task Invoke(IDictionary<string, object> environment)
         {
-            appBuilder.UseHandlerAsync((req, res) =>
-                                           {
-                                               if (_routeMatcher.HasMatch(req))
-                                               {
-                                                   var routeHandler = _routeMatcher.GetMatch(req);
-                                                   return InvokeHandler(res, routeHandler, req);
-                                               }
-                                               res.StatusCode = 404;
-                                               res.ContentType = "text/plain";
-                                               return res.WriteAsync("Not found");
-                                           });
+            var request = new OwinRequest(environment);
+            if (_routeMatcher.HasMatch(request))
+            {
+                var response = new OwinResponse(environment);
+		        var routeHandler = _routeMatcher.GetMatch(request);
+                return InvokeHandler(response, routeHandler, request);
+            }
+            return _next(environment);
         }
 
         private static Task InvokeHandler(OwinResponse res, Func<OwinRequest, object> routeHandler, OwinRequest req)
@@ -41,5 +43,6 @@ namespace Flasky
             res.ContentType = "text/plain";
             return res.WriteAsync(result.ToString());
         }
+
     }
 }

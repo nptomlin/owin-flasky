@@ -26,10 +26,9 @@ namespace Flasky
             return this;
         }
 
-        protected internal void Initialise(IAppBuilder appBuilder)
+        protected internal IAppBuilder Initialise(IAppBuilder appBuilder)
         {
-            var flaskyApp = new FlaskyApplication(new RouteMatcher(_routeHandlers));
-            flaskyApp.Initialise(appBuilder);
+            return appBuilder.Use(typeof(FlaskyApplication), new RouteMatcher(_routeHandlers));
         }
     }
 }

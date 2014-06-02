@@ -5,11 +5,11 @@ namespace Flasky
 {
     public static class FlaskyExtensions
     {
-        public static void UseFlasky(this IAppBuilder appBuilder, Action<FlaskyConfiguration> configAction)
+        public static IAppBuilder UseFlasky(this IAppBuilder appBuilder, Action<FlaskyConfiguration> configAction)
         {
             var appConfig = new FlaskyConfiguration();
             configAction(appConfig);
-            appConfig.Initialise(appBuilder);
+            return appConfig.Initialise(appBuilder);
         }
     }
 }

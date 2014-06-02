@@ -66,8 +66,6 @@ namespace Flasky.Tests
         [Test]
         public void When_matcher_is_asked_to_return_a_request_handler_that_is_not_set_up_null_is_returned()
         {
-            const string testResponse = "test-response";
-
             var matcher = new RouteMatcher(new Dictionary<RouteBase, Func<OwinRequest, object>> { });
 
             var request = OwinRequest.Create();
@@ -120,29 +118,36 @@ namespace Flasky.Tests
         }
 
         [Test]
+        public void When_two_args_in_route_expect_all_to_be_present_in_order_to_match()
+        {
+            var route = new RegexRoute("/<one>/<two>");
+            Assert.That(route.HasMatch("/one/two"));
+            Assert.That(route.HasMatch("/one"), Is.False);
+        }
+
+        [Test]
         public void Test_paths()
         {
             var routeHandlers = new Dictionary<RouteBase, Func<OwinRequest, object>>
                                     {
                                         {new RegexRoute("/"), r => { return "default"; }},
                                         {new RegexRoute("/special"), r => { return "special"; }},
-                                        {new RegexRoute("/<year>"), r => { return "year"; }},
-                                        {new RegexRoute("/<name>"), r => { return "post"; }},
-                                        {new RegexRoute("/<name>/edit"), r => { return "editpage"; }},
                                         {new RegexRoute("/<name1>/silly/<name2>"), r => { return "sillypage"; }},
                                         {new RegexRoute("/<name1>/silly/<name2>/edit"), r => { return "editsillypage"; }},
-                                        {new RegexRoute("/Talk:<name>"), r => { return "talk"; }},
+                                        {new RegexRoute("/Talk:<name*>"), r => { return "talk"; }},
                                         {new RegexRoute("/User:<username>"), r => { return "user"; }},
-                                        {new RegexRoute("/User:<username>/<name>"), r => { return "userpage"; }},
-                                        {new RegexRoute("/Files/<file>"), r => { return "files"; }}
+                                        {new RegexRoute("/User:<username>/<name*>"), r => { return "userpage"; }},
+                                        {new RegexRoute("/<year>"), r => { return "date"; }},
+                                        {new RegexRoute("/Files/<file*>"), r => { return "files"; }},
+                                        {new RegexRoute("/<name*>/edit"), r => { return "editpage"; }},
+                                        {new RegexRoute("/<name*>"), r => { return "post"; }}
                                     };
-
             var matcher = new RouteMatcher(routeHandlers);
 
             AssertPathMatches(matcher, "/" , "default");
             AssertPathMatches(matcher, "/Special", "special");
-            AssertPathMatches(matcher, "/2007", "year");
-            AssertPathMatches(matcher, "/Some/Page", "page");
+            AssertPathMatches(matcher, "/2014", "date");
+            AssertPathMatches(matcher, "/Some/Page", "post");
             AssertPathMatches(matcher, "/Some/Page/edit", "editpage");
             AssertPathMatches(matcher, "/Foo/silly/bar", "sillypage");
             AssertPathMatches(matcher, "/Foo/silly/bar/edit", "editsillypage");
@@ -158,7 +163,7 @@ namespace Flasky.Tests
             request.Path = path;
             
             var match = matcher.GetMatch(request);
-            Assert.That(match(request).ToString(), Is.EqualTo(expectedResponse));
+            Assert.That(match(request).ToString(), Is.EqualTo(expectedResponse), "invalid match for path:" + path);
         }
     }
 }

@@ -7,86 +7,116 @@ namespace Flasky
 {
     public class RegexRoute : RouteBase
     {
-        static readonly Regex PathParseRegex;
-
-        static RegexRoute()
-        {
-            //stolen from flask
-            const string pattern = @"(?<static>[^<]*) # static rule data
-<
-(?:
-(?<converter>[a-zA-Z_][a-zA-Z0-9_]*) # converter name
-(?:\((?<args>.*?)\))? # converter arguments
-\: # variable delimiter
-)?
-(?<variable>[a-zA-Z_][a-zA-Z0-9_]*) # variable name
->
-";
-
-            PathParseRegex = new Regex(pattern, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
-        }
-
+        readonly bool _isLeaf;
+        readonly object _syncLock = new object();
+        
+        Regex _pathMatchRegex;
 
         public RegexRoute(string path) : base(path)
         {
-            
+            _isLeaf = !path.EndsWith("/");
         }
 
         public RegexRoute(string path, string method) : base(path, method)
         {
+            _isLeaf = !path.EndsWith("/");
         }
 
         public override bool HasMatch(string path)
         {
-            var match = PathParseRegex.Match(path);
+            if(_pathMatchRegex == null)
+            {
+                lock (_syncLock)
+                {
+                    if(_pathMatchRegex == null)
+                    {
+                        Compile();
+                    }
+                }
+            }
+            var match = _pathMatchRegex.Match(path);
             return match.Success;
         }
 
-        /// <summary>
-        /// Aka parse rule.. prepares components for matcher
-        /// </summary>
-        private IEnumerable<Tuple<string, string>> Prepare()
+        private void Compile()
         {
-            //Parse a rule and return it as generator. Each iteration yields tuples
-            //in the form ``(converter, arguments, variable)``. If the converter is
-            //`None` it's a static url part, otherwise it's a dynamic one.
+            //def compile(self):
+            //"""Compiles the regular expression and stores it."""
+            //assert self.map is not None, 'rule not bound'
 
-            var pos = 0;
-            var end = Path.Length;
-            Func<string, int, Match> do_match = PathParseRegex.Match;
-            var usedNames = new HashSet<String>();
-            while (pos < end)
+            //if self.map.host_matching:
+            //    domain_rule = self.host or ''
+            //else:
+            //    domain_rule = self.subdomain or ''
+
+            //self._trace = []
+            //self._converters = {}
+            //self._weights = []
+            //regex_parts = []
+            var regexParts = new List<string>();
+            foreach(var tuple in PathParseHelper.Prepare(_isLeaf ? Path : Path.TrimEnd('/')))
             {
-                var m = do_match(Path, pos);
-                if(!m.Success)
+                var converter = tuple.Item1;
+                var variable = tuple.Item2;
+                if (converter == null)
                 {
-                    break;
+                    regexParts.Add(Regex.Escape(variable));
                 }
-                var data = m.Groups;
-                if(data["static"].Success)
+                else if (converter.Equals("default"))
                 {
-                    yield return new Tuple<string, string>(null, data["static"].Value);
+                    regexParts.Add("(?<{0}>[^/]+)".Fmt(variable));
                 }
-                var variable = data["variable"].Value;
-                //var converter = data['converter'] or 'default' // converter not required ?? 
-                if(usedNames.Contains(variable))
+                else if (converter.Equals("wildcard"))
                 {
-                    throw new ArgumentException("variable name {0} used twice.".Fmt(variable), Path);// perhaps a route config error
+                    regexParts.Add("(?<{0}>[^/].*?)".Fmt(variable));
                 }
-                usedNames.Add(variable);
-                yield return new Tuple<string, string>(data["args"].Success ? data["args"].Value : null,variable);
-                pos = m.Index + m.Length;
-            }
-            if( pos < end)
-            {
-                var remaining = Path.Substring(pos);
-                if(remaining.Contains(">") || remaining.Contains("<"))
-                {
-                    throw new ArgumentException("'malformed url rule: {0}".Fmt(Path), Path);
-                }
-                yield return new Tuple<string, string>(null, remaining);
+
             }
 
+            if(!_isLeaf)
+            {
+                regexParts.Add("(?<!/)(?<__suffix__>/?)");
+            }
+
+            _pathMatchRegex = new Regex("^{0}$".Fmt(regexParts.Join("")), RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            //def _build_regex(rule):
+            //    for converter, arguments, variable in parse_rule(rule):
+            //        if converter is None:
+            //            regex_parts.append(re.escape(variable))
+            //            self._trace.append((False, variable))
+            //            for part in variable.split('/'):
+            //                if part:
+            //                    self._weights.append((0, -len(part)))
+            //        else:
+            //            if arguments:
+            //                c_args, c_kwargs = parse_converter_args(arguments)
+            //            else:
+            //                c_args = ()
+            //                c_kwargs = {}
+            //            convobj = self.get_converter(
+            //                variable, converter, c_args, c_kwargs)
+            //            regex_parts.append('(?P<%s>%s)' % (variable, convobj.regex))
+            //            self._converters[variable] = convobj
+            //            self._trace.append((True, variable))
+            //            self._weights.append((1, convobj.weight))
+            //            self.arguments.add(str(variable))
+
+            //_build_regex(domain_rule)
+            //regex_parts.append('\\|')
+            //self._trace.append((False, '|'))
+            //_build_regex(self.is_leaf and self.rule or self.rule.rstrip('/'))
+            //if not self.is_leaf:
+            //    self._trace.append((False, '/'))
+
+            //if self.build_only:
+            //    return
+            //regex = r'^%s%s$' % (
+            //    u''.join(regex_parts),
+            //    (not self.is_leaf or not self.strict_slashes) and
+            //        '(?<!/)(?P<__suffix__>/?)' or ''
+            //)
+            //self._regex = re.compile(regex, re.UNICODE)
         }
     }
 }

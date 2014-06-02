@@ -66,6 +66,7 @@
     <Compile Include="FlaskyApplication.cs" />
     <Compile Include="FlaskyConfiguration.cs" />
     <Compile Include="FlaskyExtensions.cs" />
+    <Compile Include="PathParseHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexRoute.cs" />
     <Compile Include="Response\IResponse.cs" />
