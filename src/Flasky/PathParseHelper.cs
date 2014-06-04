@@ -12,13 +12,6 @@ namespace Flasky
         static PathParseHelper()
         {
             //stolen from flask
-//            const string pattern = @"(?<static>[^<]*) # static rule data
-//<
-//(?<variable>[a-zA-Z_][a-zA-Z0-9_]*) # variable name
-//(?<wildcard>[\*]{0,1}) # wildcard
-//>
-//";
-
             const string pattern = @"(?<static>[^<]*) # static rule data
 <
 (?:
@@ -29,15 +22,6 @@ namespace Flasky
 >
 ";
 
-            var v = @"(?P<static>[^<]*) # static rule data
-<
-(?:
-(?P<converter>[a-zA-Z_][a-zA-Z0-9_]*) # converter name
-(?:\((?P<args>.*?)\))? # converter arguments
-\: # variable delimiter
-)?
-(?P<variable>[a-zA-Z_][a-zA-Z0-9_]*) # variable name
->";
             PathParseRegex = new Regex(pattern, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
         }

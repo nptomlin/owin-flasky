@@ -25,5 +25,24 @@ namespace Flasky.Tests
             var route = new RegexRoute(@"foo/<bar>/");
             Assert.That(route.HasMatch("foo/bar/"), Is.True);
         }
+
+        [Test]
+        public void When_route_contains_parameters_parameters_are_populated()
+        {
+            var route = new RegexRoute(@"foo/<bar>/");
+
+            Assert.That(route.Parameters, Is.Not.Null);
+            Assert.That(route.Parameters, Is.Not.Empty);
+            Assert.That(route.Parameters.Length, Is.EqualTo(1));
+            Assert.That(route.Parameters, Contains.Item("bar"));
+        }
+
+        [Test]
+        public void When_route_that_has_parameter_has_parameter_queried_expect_value_is_returned()
+        {
+            var route = new RegexRoute(@"foo/<bar>/");
+
+            Assert.That(route.GetParameterValue("foo/moishere/", "bar"), Is.EqualTo("moishere"));
+        }
     }
 }
